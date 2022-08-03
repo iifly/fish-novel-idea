@@ -1,0 +1,43 @@
+<idea-plugin>
+    <id>io.iifly.fishnovel</id>
+    <name>fish-novel</name>
+    <version>1.0.0</version>
+    <vendor email="3409472813@qq.com" url="https://github.com/iifly">iifly</vendor>
+
+    <description>
+        <![CDATA[
+         <p> Idea 摸鱼看书插件，根据开源项目 https://github.com/yisier/thief-book-idea 修改而成 </p>
+        ]]>
+    </description>
+
+    <change-notes>
+
+    </change-notes>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="173.0"/>
+
+    <!-- please see https://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!--canCloseContents 允许用户关闭-->
+        <toolWindow id="fish-novel" anchor="bottom" canCloseContents="true"
+                    factoryClass="io.iifly.fishnovel.ui.MainUi"/>
+
+        <projectConfigurable groupId="Other Settings" displayName="Fish-Novel" id="novel.id"
+                             instance="io.iifly.fishnovel.conf.FishNovelConf"/>
+        <applicationService
+                serviceImplementation="io.iifly.fishnovel.conf.PersistentState"/>
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="fish-novel" class="io.iifly.fishnovel.actions.FishNovel" text="Fish-Novel">
+            <add-to-group group-id="WindowMenu" anchor="last"/>
+        </action>
+    </actions>
+
+</idea-plugin>
