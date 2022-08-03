@@ -6,7 +6,14 @@
 
     <description>
         <![CDATA[
-         <p> Idea 摸鱼看书插件，根据开源项目 https://github.com/yisier/thief-book-idea 修改而成 </p>
+        <h1>Fish-Novel</h1>
+        <p> Idea 摸鱼看书插件，根据开源项目 https://github.com/yisier/thief-book-idea 修改而成 </p>
+        <h2>快捷键</h2>
+        <ul>
+        <li>向后翻页：<code> Alt + J </code></li>
+        <li>向前翻页：<code> Alt + K </code></li>
+        <li>老板键：<code> Alt + ; </code></li>
+        <ul>
         ]]>
     </description>
 
