@@ -197,7 +197,7 @@ public class MainUi implements ToolWindowFactory, DumbAware {
         refresh.addActionListener(e -> {
             try {
                 persistentState = PersistentState.getInstanceForce();
-                if (!Objects.equals(novelPath, persistentState.getNovelPath())) {
+                if (!StringUtils.equals(novelPath, persistentState.getNovelPath())) {
                     if (StringUtils.isEmpty(persistentState.getNovelPath())) {
                         return;
                     }
@@ -207,10 +207,14 @@ public class MainUi implements ToolWindowFactory, DumbAware {
                     persistentState.setCurrentPage("1");;
                     persistentState.setTotalLine(String.valueOf(countLine()));
                 }
+                if (currentPage > 1 && !StringUtils.equals(String.valueOf(lineCount), persistentState.getLineCount())) {
+                    long currentLine = currentPage * lineCount - lineCount;
+                    lineCount = Integer.parseInt(persistentState.getLineCount());
+                    currentPage = (currentLine + lineCount) / lineCount;
+                }
                 seekCache.clear();
                 type = persistentState.getFontType();
                 size = persistentState.getFontSize();
-                lineCount = Integer.parseInt(persistentState.getLineCount());
 
                 current.setText(String.valueOf(currentPage));
                 total.setText("/" + totalPage());
