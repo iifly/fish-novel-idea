@@ -196,22 +196,26 @@ public class MainUi implements ToolWindowFactory, DumbAware {
         refresh.addActionListener(e -> {
             try {
                 persistentState = PersistentState.getInstanceForce();
+                boolean clearCache = false;
                 if (!StringUtils.equals(novelPath, persistentState.getNovelPath())) {
                     if (StringUtils.isEmpty(persistentState.getNovelPath())) {
                         return;
                     }
-
+                    clearCache = true;
                     novelPath = persistentState.getNovelPath();
                     currentPage = 1;
                     persistentState.setCurrentPage("1");;
                     persistentState.setTotalLine(String.valueOf(countLine()));
                 }
-                if (currentPage > 1 && !StringUtils.equals(String.valueOf(lineCount), persistentState.getLineCount())) {
+                if (!StringUtils.equals(String.valueOf(lineCount), persistentState.getLineCount())) {
+                    clearCache = true;
                     long currentLine = currentPage * lineCount;
                     lineCount = Integer.parseInt(persistentState.getLineCount());
                     currentPage = currentLine / lineCount;
                 }
-                seekCache.clear();
+                if(clearCache) {
+                    seekCache.clear();
+                }
                 type = persistentState.getFontType();
                 size = persistentState.getFontSize();
 
