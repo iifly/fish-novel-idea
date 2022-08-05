@@ -152,7 +152,6 @@ public class MainUi implements ToolWindowFactory, DumbAware {
      **/
     private JTextField initTextField() {
         current = new JTextField();
-        // current.setAutoscrolls(true);
         current.setHorizontalAlignment(JTextField.RIGHT);
         current.setOpaque(false);
         current.setBorder(JBUI.Borders.empty(0));
@@ -208,9 +207,9 @@ public class MainUi implements ToolWindowFactory, DumbAware {
                     persistentState.setTotalLine(String.valueOf(countLine()));
                 }
                 if (currentPage > 1 && !StringUtils.equals(String.valueOf(lineCount), persistentState.getLineCount())) {
-                    long currentLine = currentPage * lineCount - lineCount;
+                    long currentLine = currentPage * lineCount;
                     lineCount = Integer.parseInt(persistentState.getLineCount());
-                    currentPage = (currentLine + lineCount) / lineCount;
+                    currentPage = currentLine / lineCount;
                 }
                 seekCache.clear();
                 type = persistentState.getFontType();
@@ -242,7 +241,9 @@ public class MainUi implements ToolWindowFactory, DumbAware {
             }
 
             current.setText(String.valueOf(--currentPage));
-            textArea.setText(loadCurrentPage(findSeek(currentPage)));
+            textArea.setText(loadCurrentPage(Optional
+                    .ofNullable(seekCache.get(currentPage))
+                    .orElse(prePageSeek(Long.parseLong(persistentState.getCurrentSeek())))));
         });
 
         prevB.registerKeyboardAction(prevB.getActionListeners()[0],
@@ -330,7 +331,33 @@ public class MainUi implements ToolWindowFactory, DumbAware {
     }
 
     /**
-     * 找查找当前页指针位置
+     * 查找上一页指针位置
+     **/
+    private long prePageSeek(long currentPageSeek) {
+        try (RandomAccessFile ra = new RandomAccessFile(novelPath, "r")) {
+            ra.seek(--currentPageSeek);
+            int lineNum = 0;
+            while(currentPageSeek > 0) {
+                int c = ra.read();
+                if (c != (int) System.lineSeparator().getBytes()[System.lineSeparator().getBytes().length - 1]) {
+                    ra.seek(--currentPageSeek);
+                    continue;
+                }
+                if (++lineNum > lineCount) {
+                    currentPageSeek =  ra.getFilePointer();
+                    break;
+                }
+                ra.seek(--currentPageSeek);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return currentPageSeek;
+    }
+
+    /**
+     * 查找指定页指针位置
      **/
     private long findSeek(long page) {
         if (page <= 1) {
