@@ -124,7 +124,7 @@ public class MainUi implements ToolWindowFactory, DumbAware {
         textArea.setFont(new Font(type, Font.PLAIN, Integer.parseInt(size)));
         textArea.setBorder(JBUI.Borders.empty());
         textArea.setRows(lineCount);
-        textArea.setText(loadCurrentPage(currentPage));
+        textArea.setText(loadCurrentPage(Long.parseLong(persistentState.getCurrentSeek())));
         return textArea;
     }
 
