@@ -307,6 +307,9 @@ public class MainUi implements ToolWindowFactory, DumbAware {
         }
         try (RandomAccessFile ra = new RandomAccessFile(novelPath, "r")) {
             persistentState.setCurrentSeek(String.valueOf(targetSeek));
+            if (currentPage % cacheStep == 0) {
+                seekCache.put(currentPage, targetSeek);
+            }
             StringBuilder str = new StringBuilder();
             ra.seek(targetSeek);
             String aLine;
