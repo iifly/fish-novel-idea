@@ -366,34 +366,34 @@ public class MainUi implements ToolWindowFactory, DumbAware {
     /**
      * 查找指定页指针位置
      **/
-    private long findSeek(long page) {
-        if (page <= 1) {
+    private long findSeek(long targetPage) {
+        if (targetPage <= 1) {
             return 0;
         }
-        if (seekCache.containsKey(page)) {
-            return seekCache.get(page);
+        if (seekCache.containsKey(targetPage)) {
+            return seekCache.get(targetPage);
         }
         long seek = 0;
         try (RandomAccessFile ra = new RandomAccessFile(novelPath, "r")) {
             long line = 0;
-            long preCachePage = page / cacheStep * cacheStep;
+            long preCachePage = targetPage / cacheStep * cacheStep;
             while (preCachePage > 0) {
                 if (seekCache.containsKey(preCachePage)) {
                     ra.seek(seekCache.get(preCachePage));
-                    line = preCachePage * lineCount;
+                    line = preCachePage * lineCount - lineCount;
                     break;
                 }
                 preCachePage -= cacheStep;
             }
 
-            long currentLine = page * lineCount - lineCount;
+            long targetLine = targetPage * lineCount - lineCount;
             while (ra.readLine() != null) {
                 line++;
-                if (line % (cacheStep * lineCount) == 0) {
-                    seekCache.put((line / lineCount), ra.getFilePointer());
-                    // System.out.println("cache page : " + (line / lineCount) + "seek : " + ra.getFilePointer());
+                if ((line + lineCount) % (cacheStep * lineCount) == 0) {
+                    seekCache.put((line + lineCount) / lineCount, ra.getFilePointer());
+                    // System.out.println("cache page : " + ((line + lineCount) / lineCount) + "seek : " + ra.getFilePointer());
                 }
-                if (line == currentLine) {
+                if (line == targetLine) {
                     seek = ra.getFilePointer();
                     break;
                 }
